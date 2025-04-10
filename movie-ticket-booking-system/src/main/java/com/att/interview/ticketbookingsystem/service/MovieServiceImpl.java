@@ -110,7 +110,7 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public List<MovieDto> getMoviesByReleaseYear(int releaseYear) {
-        List<Movie> movies = moviesRepo.findByReleaseYear(releaseYear);
+        List<Movie> movies = moviesRepo.findByTitleYear_Year(releaseYear);
         if (movies.isEmpty()) {
             log.warn("Movies with year of release {} not found", releaseYear);
         } else {

@@ -52,7 +52,7 @@ public class BookingServiceImpl implements BookingService {
 
 	@Override
 	public List<BookingResponseDto> getBookingsByUser(String email) {
-		List<Booking> booking = bookingRepo.findByUserId(email);
+		List<Booking> booking = bookingRepo.findByUserEmail(email);
 		if(booking.isEmpty()) {
 			log.warn("booking with user id {} has no sessions", email);
 		} else {

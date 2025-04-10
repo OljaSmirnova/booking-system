@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import com.att.interview.ticketbookingsystem.dto.MovieDto;
-import com.att.interview.ticketbookingsystem.dto.MovieTitleAndYearData;
 import com.att.interview.ticketbookingsystem.service.MovieService;
 
 import static com.att.interview.ticketbookingsystem.api.UrlConstants.*;
@@ -36,16 +35,16 @@ public class MovieController {
 		return movieService.updateMovieData(movieDto);
 	}
 	
-	@DeleteMapping("{movieData}")
-	MovieDto deleteMovie(@RequestBody @Valid MovieTitleAndYearData movieData) {
-		log.debug("deleteMovie: movie with title {} and release year {}", movieData.title(), movieData.releaseYear());
-		return movieService.deleteMovie(movieData.title(), movieData.releaseYear());
+	@DeleteMapping("{title}/{releaseYear}")
+	MovieDto deleteMovie(@PathVariable String title, @PathVariable int releaseYear) {
+		log.debug("deleteMovie: movie with title {} and release year {}", title, releaseYear);
+		return movieService.deleteMovie(title, releaseYear);
 	}
 	
-	@GetMapping("{movieData}")
-	MovieDto getMovieData(@RequestBody @Valid MovieTitleAndYearData movieData) {
-		log.debug("getMovieData: movie with title {} and release year {}", movieData.title(), movieData.releaseYear());
-		return movieService.getMovieData(movieData.title(), movieData.releaseYear());
+	@GetMapping("{title}/{releaseYear}")
+	MovieDto getMovieData(@PathVariable String title, @PathVariable int releaseYear) {
+		log.debug("getMovieData: movie with title {} and release year {}", title, releaseYear);
+		return movieService.getMovieData(title, releaseYear);
 	}
 	
 	@GetMapping()

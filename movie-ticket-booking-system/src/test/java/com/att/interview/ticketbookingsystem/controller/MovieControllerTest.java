@@ -10,22 +10,23 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.att.interview.exception.controller.ExceptionController;
 import com.att.interview.ticketbookingsystem.api.ValidationConstants;
+import com.att.interview.ticketbookingsystem.config.TestSecurityConfig;
 import com.att.interview.ticketbookingsystem.dto.MovieDto;
 import com.att.interview.ticketbookingsystem.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.att.interview.ticketbookingsystem.api.UrlConstants.*;
 
-@WebMvcTest
-@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(MovieController.class)
+@Import({TestSecurityConfig.class, ExceptionController.class})
 class MovieControllerTest {
 
 	@Autowired
@@ -46,23 +47,21 @@ class MovieControllerTest {
 	private static final String MOVIE_DATA = "/Inception/2010";
 	private static final int RATING_1 = 8;
 	private static final int YEAR_1 = 2010;
-	private static final String TITLE_1 = "CINDERELA";
 	private MovieDto movieDto = new MovieDto("Inception", "Sci-Fi", 148, 8.8, 2010);
-	private MovieDto movieMissingFields = new MovieDto("", "", 148, 8.8, 2010);
-	private MovieDto movieWrongFields = new MovieDto("Inception", "Sci-Fi", -148, 8.8, 2120);
+	private MovieDto movieMissingFields = new MovieDto("", "Sci-Fi", 148, 8.8, null);
+	private MovieDto movieWrongFields = new MovieDto("Inception", "Sci-Fi", 148, 8.8, 1870);
 	private MovieDto updatedMovie = new MovieDto("Inception", "Sci-Fi", 148, 9.0, 2010);
 	private List<MovieDto> movies = Arrays.asList(
             new MovieDto("Inception", "Sci-Fi", 148, 8.8, 2010),
             new MovieDto("The Dark Knight", "Action", 152, 9.0, 2008),
             new MovieDto("The Matrix", "Sci-Fi", 136, 8.7, 1999)       
     );
-//	String[] errorMessageMovieWrongFields = {ExceptionController.JSON_TYPE_MISMATCH_MESSAGE};
-//	String[] errorMessagesMovieMissingFields = { ValidationConstants.MISSING_MOVIE_TITLE,
-//			ValidationConstants.MISSING_MOVIE_GENRE
-//			};
-//	String[] errorMessagesMovieWrongFields = { ValidationConstants.WRONG_DURATION, 
-//			ValidationConstants.WRONG_MIN_MOVIE_RELEASE_YEAR_VALUE, ValidationConstants.WRONG_MAX_MOVIE_RELEASE_YEAR_VALUE
-//			};
+	String[] errorMessageMovieWrongFields = {ExceptionController.JSON_TYPE_MISMATCH_MESSAGE};
+	String[] errorMessagesMovieMissingFields = { ValidationConstants.MISSING_MOVIE_TITLE,
+			ValidationConstants.MISSING_MOVIE_RELEASE_YEAR
+			};
+	String[] errorMessagesMovieWrongFields = { ValidationConstants.WRONG_MIN_MOVIE_RELEASE_YEAR_VALUE, 
+			};
 
 	@Test
 	void addMovie_ReturnsCreatedMovie() throws Exception {
@@ -158,31 +157,31 @@ class MovieControllerTest {
 	    assertEquals(mapper.writeValueAsString(movies), response);
 	}
 	
-//	@Test
-//	void addMovie_MissingFields_ReturnsAlert() throws Exception {
-//		String movieJSON = mapper.writeValueAsString(movieMissingFields);
-//		String response = mockMvc
-//				.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
-//				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
-//		assertErrorMessages(errorMessagesMovieMissingFields, response);
-//	}
-//
-//	private void assertErrorMessages(String[] expectedMessages, String response) {
-//		Arrays.sort(expectedMessages);
-//		String [] actualMessages = response.split(";");
-//		Arrays.sort(actualMessages);
-//		assertArrayEquals(expectedMessages, actualMessages);
-//		
-//	}
+	@Test
+	void addMovie_MissingFields_ReturnsAlert() throws Exception {
+		String movieJSON = mapper.writeValueAsString(movieMissingFields);
+		String response = mockMvc
+				.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
+				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+		assertErrorMessages(errorMessagesMovieMissingFields, response);
+	}
 
-//	@Test
-//	void addMovie_WrongFields_ReturnsAlert() throws Exception {
-//		String movieJSON = mapper.writeValueAsString(movieWrongFields);
-//		String response = mockMvc
-//				.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
-//				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
-//		assertErrorMessages(response, errorMessagesMovieWrongFields);
-//	}
+	private void assertErrorMessages(String[] expectedMessages, String response) {
+		Arrays.sort(expectedMessages);
+		String [] actualMessages = response.split(";");
+		Arrays.sort(actualMessages);
+		assertArrayEquals(expectedMessages, actualMessages);
+		
+	}
+
+	@Test
+	void addMovie_WrongFields_ReturnsAlert() throws Exception {
+		String movieJSON = mapper.writeValueAsString(movieWrongFields);
+		String response = mockMvc
+				.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
+				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+		assertErrorMessages(errorMessagesMovieWrongFields, response);
+	}
 
 
 
