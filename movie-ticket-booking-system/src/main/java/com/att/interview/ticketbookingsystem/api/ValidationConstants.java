@@ -37,7 +37,7 @@ public interface ValidationConstants {
 	String WRONG_SIZE_PASSWORD = "Password must be great or equal " + MIN_SIZE_PASSWORD;
 	
 	String MISSING_SEAT_NUMBER = "Missing seat number";
-	String SEAT_NUMBER_REGEX = "\"^[A-Z]\\\\d+$\"";
+	String SEAT_NUMBER_REGEX = "^[A-Z]\\-\\d+$";
 	String WRONG_SEAT_NUMBER = "Seat number must start with a capital letter followed by digits";
 	String MISSING_TICKET_PRICE = "Missing ticket price";
 	String WRONG_TICKET_PRICE_VALUE = "Ticket price must be a positive number or zero";

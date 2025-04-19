@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import static com.att.interview.ticketbookingsystem.api.ValidationConstants.*;
 
 public record UserDto(
-		@NotEmpty(message = MISSING_USER_NAME)
+		@NotNull(message = MISSING_USER_NAME)
 		@Size(min = MIN_SIZE_NAME, max = MAX_SIZE_NAME, message = WRONG_SIZE_NAME)
 		String name,
 		@NotEmpty(message = MISSING_EMAIL)

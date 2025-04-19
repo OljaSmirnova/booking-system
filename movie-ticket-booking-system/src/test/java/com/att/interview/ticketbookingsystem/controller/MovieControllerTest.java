@@ -20,10 +20,13 @@ import com.att.interview.exception.controller.ExceptionController;
 import com.att.interview.ticketbookingsystem.api.ValidationConstants;
 import com.att.interview.ticketbookingsystem.config.TestSecurityConfig;
 import com.att.interview.ticketbookingsystem.dto.MovieDto;
+import com.att.interview.ticketbookingsystem.exception.MovieNotFoundException;
+import com.att.interview.ticketbookingsystem.exception.MovieStateException;
 import com.att.interview.ticketbookingsystem.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.att.interview.ticketbookingsystem.api.UrlConstants.*;
+import static com.att.interview.ticketbookingsystem.api.ServiceExceptionMessages.*;
 
 @WebMvcTest(MovieController.class)
 @Import({TestSecurityConfig.class, ExceptionController.class})
@@ -45,6 +48,7 @@ class MovieControllerTest {
 	private static final String URL_MOVIES_RELEASE_YEAR = URL_MOVIES + MOVIES_RELEASE_YEAR;
 	private static final String GENER_1 = "Sci-Fi";
 	private static final String MOVIE_DATA = "/Inception/2010";
+	private static final String TITLE_1 = "Inception";
 	private static final int RATING_1 = 8;
 	private static final int YEAR_1 = 2010;
 	private MovieDto movieDto = new MovieDto("Inception", "Sci-Fi", 148, 8.8, 2010);
@@ -181,6 +185,28 @@ class MovieControllerTest {
 				.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
 				.andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 		assertErrorMessages(errorMessagesMovieWrongFields, response);
+	}
+	
+	@Test
+	void addMovie_MovieAlreadyExists_ReturnsAlert() throws Exception {
+		when(movieService.addMovie(movieDto)).thenThrow(new MovieStateException(TITLE_1, YEAR_1));
+		
+		String movieJSON = mapper.writeValueAsString(movieDto);
+		String response = mockMvc.perform(post(URL_MOVIES).contentType(MediaType.APPLICATION_JSON).content(movieJSON))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+		
+		assertEquals(String.format(MOVIE_ALREADY_EXISTS , TITLE_1, YEAR_1), response);
+	}
+	
+	@Test
+	void deleteMovie_MovieNotFound_ReturnsAlert() throws Exception {
+		when(movieService.deleteMovie(TITLE_1, YEAR_1)).thenThrow(new MovieNotFoundException());
+		
+		String actualJSON = mockMvc.perform(delete(URL_MOVIES + MOVIE_DATA))
+				.andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
+		
+		assertEquals(MOVIE_NOT_FOUND, actualJSON);
 	}
 
 

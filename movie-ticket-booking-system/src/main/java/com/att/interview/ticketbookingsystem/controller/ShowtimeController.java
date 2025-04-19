@@ -47,14 +47,14 @@ public class ShowtimeController {
     public List<ResponseShowtimeDto> getShowtimesByMovieTitle(@PathVariable @NotEmpty(message = MISSING_MOVIE_TITLE) String title, @PathVariable @NotNull(message = MISSING_MOVIE_RELEASE_YEAR) @Min(value = MIN_MOVIE_RELEASE_YEAR, 
     		message = WRONG_MIN_MOVIE_RELEASE_YEAR_VALUE) int releaseYear) {
         log.debug("getShowtimesByMovieTitle: title = {}, release year = {}", title, releaseYear);
-        List<ResponseShowtimeDto> showtimes = showtimeService.getShowtimesByMovieTile(title, releaseYear);
+        List<ResponseShowtimeDto> showtimes = showtimeService.getShowtimesByMovie(title, releaseYear);
         if (showtimes.isEmpty()) {
             log.warn("No showtimes found for movie title {}", title, releaseYear);
         }
         return showtimes;
     }
 
-    @GetMapping(THEATERS + "{theater}")
+    @GetMapping(THEATER + "{theater}")
     public List<ResponseShowtimeDto> getShowtimesByTheater(
             @PathVariable @NotEmpty(message = MISSING_THEATER_TITLE) String theater) {
         log.debug("getShowtimesByTheater: theater = {}", theater);

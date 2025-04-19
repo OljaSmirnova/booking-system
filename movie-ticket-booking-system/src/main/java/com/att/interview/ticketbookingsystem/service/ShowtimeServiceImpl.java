@@ -102,7 +102,7 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 	}
 
 	@Override
-	public List<ResponseShowtimeDto> getShowtimesByMovieTile(String movieTitle, int movieReleaseYear) {
+	public List<ResponseShowtimeDto> getShowtimesByMovie(String movieTitle, int movieReleaseYear) {
         List<Showtime> showtimes = showtimeRepo.findByMovie_TitleYear_TitleAndMovie_TitleYear_Year(movieTitle, movieReleaseYear);
         if (showtimes.isEmpty()) {
             log.warn("Showtimes for movie {} not found", movieTitle);

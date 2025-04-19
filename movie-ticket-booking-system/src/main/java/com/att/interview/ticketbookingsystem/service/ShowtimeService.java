@@ -8,7 +8,7 @@ public interface ShowtimeService {
 	ResponseShowtimeDto addShowtime(ShowtimeDto showtimeDto);
 	ResponseShowtimeDto updateShowtimeDetails(ShowtimeDto showtimeDto);
 	ResponseShowtimeDto deleteShowtime(ShowtimeDto showtimeDto);
-	List<ResponseShowtimeDto> getShowtimesByMovieTile(String movieTitl, int movieReleaseYear);
+	List<ResponseShowtimeDto> getShowtimesByMovie(String movieTitle, int movieReleaseYear);
 	List<ResponseShowtimeDto> getShowtimesByTheater(String theater);
 	
 
